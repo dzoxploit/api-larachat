@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\BaseController as BaseController;
 use App\Models\ChatInteraction;
+use App\Models\DetailChatInteraction;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Validator;
@@ -46,5 +47,22 @@ class ChatInteractionController extends BaseController
         }else{
             return $this->sendError('Error User Id not valid');
         }
+    } 
+
+    public function delete(Request $request,$id){
+        $id_user = Auth::user()->id;
+
+        $chatinteraction = ChatInteraction::where('id',$id)->first();
+        $chatinteraction->is_delete = true;
+        $chatinteraction->deleted_at = Carbon::now();
+        $chatinteraction->save();
+
+        $detailchatinteraction = DetailChatInteraction::where('chat_interaction_id',$id)->get();
+        $detailchatinteraction->is_delete = true;
+        $detailchatinteraction->deleted_at = Carbon::now();
+        $detailchatinteraction->save();
+
+
+        return $this->sendResponse($chatinteraction, 'ChatInteraction User Showing successfully');
     }
 }
