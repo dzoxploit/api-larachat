@@ -29,5 +29,8 @@ Route::middleware('auth:api')->group( function () {
     Route::post('contact/delete/{id}', [ContactController::class, 'delete']);
 
     Route::get('chat-interaction', [ChatInteractionController::class, 'index']);
+    Route::get('chat-interaction/view/{id}', [ChatInteractionController::class, 'view']);
     Route::post('chat-interaction/create', [ChatInteractionController::class, 'create']);
+    Route::get('chat-interaction/view/{id}/create', [ChatInteractionController::class, 'create_detail_chat']);
+    Route::get('chat-interaction/view/delelte/{id}', [ChatInteractionController::class, 'delete_detail_chat']);
 });

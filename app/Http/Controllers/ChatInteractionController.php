@@ -21,6 +21,58 @@ class ChatInteractionController extends BaseController
         return $this->sendResponse($chatinteraction, 'chat interaction Showing successfully');        
     }
 
+    public function view(Request $request,$id){
+        $id_user = Auth::user()->id;
+        $chatinteraction = ChatInteraction::with(['detailchat' => function($query){
+                                                $query->orderBy('created_at', 'asc')->get();
+                                              }])->where('user_id',$id_user)->where('id',$id)->get();
+        
+    
+        $detailchatinteraction = DetailChatInteraction::where('chat_interaction_id',$id)->where('user_id','!=',$id_user)->get();
+        $detailchatinteraction->status_read = true;
+        $detailchatinteraction->save();
+         
+        return $this->sendResponse($chatinteraction, 'chat interaction Showing successfully');        
+    }
+
+    public function create_detail_chat(Request $request, $id){
+        $input = $request->all();
+        $id_user = Auth::user()->id;
+        $validator = Validator::make($input, [
+            'chat_text' => 'nullable',
+            'reply_detail_chat_interaction_id' => 'nullable',
+        ]);
+
+         
+        if($validator->fails()){
+            return $this->sendError('Validation Error.', $validator->errors());
+        }
+
+            $detailchatinteraction = new DetailChatInteraction;
+            $detailchatinteraction->chat_interaction_id = $id;
+            $detailchatinteraction->user_id = $id_user;
+            $detailchatinteraction->chat_text = $input['chat_text'];
+            $detailchatinteraction->reply_detail_chat_interaction_id = $input['reply_detail_chat_interaction_id'];
+            $detailchatinteraction->status_read = false;
+            $contactuser->is_delete = false;
+            $contactuser->save();
+
+            return $this->sendResponse($detailchatinteraction, 'Contact User create successfully.');
+
+    }
+
+    
+    public function delete_detail_chat($id){
+
+        $detailchatinteraction = DetailChatInteraction::where('id',$id)->first();
+        $detailchatinteraction->is_delete = true;
+        $detailchatinteraction->deleted_at = Carbon::now();
+        $detailchatinteraction->save();
+
+
+        return $this->sendResponse($detailchatinteraction, 'detail ChatInteraction User delete successfully');
+    }
+
     public function create(Request $request){
         $input = $request->all();
         $id = Auth::user()->id;

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->bigInteger('chat_interaction_id')->unsigned();
             $table->bigInteger('user_id')->unsigned()->nullable();
             $table->text('chat_text')->nullable();
-            $table->bigInteger('reply_detail_chat_interaction_id')->unsigned();
+            $table->bigInteger('reply_detail_chat_interaction_id')->unsigned()->nullable();
             $table->boolean('status_read');
             $table->boolean('is_delete');
             $table->timestamps();
